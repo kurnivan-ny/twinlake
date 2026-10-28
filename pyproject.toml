@@ -11,8 +11,10 @@ dependencies = [
 # Spark client; Databricks provides its own session in prod.
 spark = ["pyspark[connect]>=3.5"]
 dev = [
-    "pyspark[connect]>=3.5",
-    "pysail",          # pin the exact version once tests pass on it
+    # exact pins: quality tests verified on Sail with these (2026-10-28)
+    "pyspark[connect]==4.2.1",
+    "pysail==0.7.2",
+    "jedi>=0.19.2,<0.20",  # needed by pysail's compatibility_check
     "pytest>=8",
     "ruff",
     "sqlfluff",
