@@ -27,8 +27,8 @@ Only config (`APP_ENV=dev|prod`, `conf/*.yml`) changes between environments. Cod
 
 | Area | Status |
 |---|---|
-| `twinlake/quality/` (spec, engine, lint) | Built. YAML validation tested. Spark tests written, **not yet run on Sail** |
-| `tests/test_quality.py` | Starts an in-process Sail server; run this first |
+| `twinlake/quality/` (spec, engine, lint) | Built. YAML validation tested. Spark tests **pass on Sail** (no engine changes needed); compatibility check: all APIs supported |
+| `tests/test_quality.py` | 5/5 pass on in-process Sail (Python 3.12, `pysail==0.7.2`, `pyspark[connect]==4.2.1`, pinned in `pyproject.toml`) |
 | `twinlake/context.py`, `io.py`, `base_job.py` | To do |
 | `twinlake/runner.py`, `orchestration/to_bundle.py` | To do |
 | `docker-compose.yml` (RustFS, Sail, UC OSS; `serving` profile: Trino, Metabase) | To do |
@@ -37,7 +37,7 @@ Only config (`APP_ENV=dev|prod`, `conf/*.yml`) changes between environments. Cod
 
 ## Next tasks, in order
 
-1. Create the venv and run the quality tests on Sail; fix anything Sail rejects.
+1. ~~Create the venv and run the quality tests on Sail; fix anything Sail rejects.~~ Done.
 2. `docker-compose.yml` with RustFS, Sail, Unity Catalog OSS; Trino + Metabase under a `serving` profile.
 3. `twinlake/context.py` (session by `APP_ENV`, config merge, `table()`, `get_secret()`), `io.py`, `base_job.py` (`BaseJob`, `SqlJob`).
 4. `twinlake/runner.py`: topological sort on `depends_on`, retries, `--from`, `--only`.
@@ -59,7 +59,7 @@ node docs/diagrams/build.mjs docs/diagrams/src docs/diagrams     # rebuild SVGs 
 ## Environment notes
 
 - Keep the repo inside the WSL filesystem (`~/projects/...`), not `/mnt/c/...`.
-- Pin the Sail version once tests pass; Delta MERGE support in Sail is newer, so every merge job needs a test.
+- Sail and PySpark are pinned in `pyproject.toml`; rerun `pytest` and the compatibility check before bumping either. Delta MERGE support in Sail is newer, so every merge job needs a test.
 - Databricks Free limits: 5 concurrent job tasks, one 2X-Small SQL warehouse, restricted outbound internet, daily compute quota.
 
 ## Git
