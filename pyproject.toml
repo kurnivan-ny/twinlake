@@ -1,0 +1,30 @@
+[project]
+name = "twinlake"
+version = "0.1.0"
+description = "One codebase for on-prem dev (Sail, RustFS) and Databricks prod"
+requires-python = ">=3.11"
+dependencies = [
+    "pyyaml>=6",
+]
+
+[project.optional-dependencies]
+# Spark client; Databricks provides its own session in prod.
+spark = ["pyspark[connect]>=3.5"]
+dev = [
+    "pyspark[connect]>=3.5",
+    "pysail",          # pin the exact version once tests pass on it
+    "pytest>=8",
+    "ruff",
+    "sqlfluff",
+    "pre-commit",
+]
+
+[tool.setuptools.packages.find]
+include = ["twinlake*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100

@@ -1,0 +1,38 @@
+# One file per table. Developers only edit YAML; the engine is shared.
+table: silver.sales
+fail_if_quarantine_ratio_above: 0.05   # stop the job if >5% of rows are bad
+
+checks:
+  # ---- row-level: failing rows go to quarantine (error) or are only counted (warn)
+  - name: order_id_not_null
+    rule: not_null
+    columns: [order_id, order_date]
+
+  - name: amount_non_negative
+    rule: between
+    columns: [amount]
+    params: {min: 0}
+
+  - name: status_valid
+    rule: in_set
+    columns: [status]
+    params: {values: [NEW, PAID, SHIPPED, CANCELLED]}
+
+  - name: email_format
+    rule: regex
+    columns: [email]
+    params: {pattern: '^[^@\s]+@[^@\s]+\.[^@\s]+$'}
+    severity: warn
+
+  - name: ship_after_order
+    rule: expr
+    params: {expr: "ship_date IS NULL OR ship_date >= order_date"}
+
+  # ---- dataset-level: an error here fails the whole job
+  - name: order_id_unique
+    rule: unique
+    columns: [order_id]
+
+  - name: not_empty
+    rule: row_count
+    params: {min: 1}
